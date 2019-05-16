@@ -10,35 +10,59 @@ function Square(props) {
   );
 }
 
+const initialState = {
+  squares: Array(9).fill(null),
+  isXNext: true,
+  winner: null
+}
+
 class Board extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       squares: Array(9).fill(null),
       isXNext: true,
+      winner: null
     };
+  }
+
+  reset() {
+    this.setState(initialState);
   }
   
   renderSquare(i) {
     return <Square value={this.state.squares[i]} onClick={() => this.handleClick(i)}/>;
   }
   
+  checkWinner(i) {
+    return null;
+  }
+  
   handleClick(i) {
-    const squares = this.state.squares.slice();
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
-    this.setState({
-      squares: squares,
-      xIsNext: !this.state.xIsNext,
-    });
+    if (this.state.squares[i] == null && this.state.winner == null) {
+      const squares = this.state.squares.slice();
+      squares[i] = this.state.xIsNext ? 'X' : 'O';
+      let winner = this.checkWinner(i);
+
+      this.setState({
+        squares: squares,
+        xIsNext: !this.state.xIsNext,
+        winner: winner
+      });
+    }
   }
 
-
   render() {
-    const status = "Next player: " + (this.state.xIsNext ? 'X' : 'O');
+    let status;
+    if (this.state.winner != null) {
+      status = "Winner: " + this.state.winner;
+    } else {
+      status = "Next player: " + (this.state.xIsNext ? 'X' : 'O');
+    }
 
     return (
       <div>
-        <button className="status" onClick={() => this.setState({value: 'O'})}>{status}</button>
+        <div className="status" >{status}</div>
         <div className="board-row">
           {this.renderSquare(0)}
           {this.renderSquare(1)}
@@ -54,6 +78,7 @@ class Board extends React.Component {
           {this.renderSquare(7)}
           {this.renderSquare(8)}
         </div>
+        <button className="reset" onClick={() => this.reset()}>Reset</button>
       </div>
     );
   }
