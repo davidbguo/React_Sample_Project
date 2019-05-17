@@ -10,24 +10,25 @@ function Square(props) {
   );
 }
 
-const initialState = {
+/*const initialState = {
   squares: Array(9).fill(null),
   isXNext: true,
   winner: null
-}
+}*/
 
 class Board extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
+    this.initialState = {
       squares: Array(9).fill(null),
-      isXNext: true,
+      xIsNext: true,
       winner: null
     };
+    this.state = this.initialState;
   }
 
   reset() {
-    this.setState(initialState);
+    this.setState(this.initialState);
   }
   
   renderSquare(i) {
