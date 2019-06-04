@@ -18,7 +18,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      getUrl: "https://api.github.com/repos/octocat/Hello-World/commits",
+      personalToken: " 672b27f56b6c831649516e926fbe87279567fc3e"
+      getUrl: "https://api.github.com/repos/davidbguo/React_Sample_Project/commits",
       jsonResponse: null
     };
   }
