@@ -1,8 +1,6 @@
 import React from "react";
 import "./App.css";
 
-class RepositorySelector extends React.Component {}
-
 function singleCommit(jsonData, step) {
   return (
     <tr key={step}>
@@ -14,34 +12,75 @@ function singleCommit(jsonData, step) {
   );
 }
 
+function singleRepo(jsonData, step) {
+  return (
+    <tr key={step}>
+      <td>{jsonData.owner}</td>
+      <td>{jsonData.name}</td>
+    </tr>
+  );
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      personalToken: " 672b27f56b6c831649516e926fbe87279567fc3e"
       getUrl: "https://api.github.com/repos/davidbguo/React_Sample_Project/commits",
-      jsonResponse: null
+      commitJSON: null,
+      repoJSON: [],
+      repoList: [],
+      collabList: ["axk737", "davidbguo"]
     };
   }
+
+  getListOfRepos() {
+    const gitURL = "https://api.github.com/users/"
+    for (var user in this.state.collabList) {
+      var fetchURL = gitURL + this.state.collabList[user] + "/repos";
+      fetch(fetchURL)
+      .then(response => response.json())
+      .then(data => {
+        var singleRepoJSON = {
+          name: null,
+          owner: null
+        };
+        var repoJSONList = [];
+        for (var repo in data) {
+          singleRepoJSON = {
+            name: data[repo].name,
+            owner: data[repo].owner.login
+          }
+          repoJSONList = repoJSONList.concat([singleRepoJSON]);
+        }
+        this.setState({ repoJSON: this.state.repoJSON.concat(repoJSONList) })
+      })
+      .catch(error => console.log(error));
+    }
+  }
+
   getListOfCommits() {
     fetch(this.state.getUrl)
       .then(response => response.json())
       .then(data => {
-        this.setState({ jsonResponse: data });
+        this.setState({ commitJSON: data });
       })
       .catch(error => console.log(error));
   }
 
   componentWillMount() {
+    this.getListOfRepos();
     this.getListOfCommits();
   }
 
   render() {
     return (
       <div className="App">
-        <div className="RepositorySelector">{/*<RepositorySelector />*/}</div>
+        <div className="RepositorySelector">{
+         <RepoSelecter jsonData={this.state.repoJSON} />
+        }
+        </div>
         <div className="CommitLogs">
-          <CommitLogs jsonData={this.state.jsonResponse} />
+          <CommitLogs jsonData={this.state.commitJSON} />
         </div>
       </div>
     );
@@ -72,6 +111,36 @@ class CommitLogs extends React.Component {
             <th>Email</th>
             <th>Date</th>
             <th>Message</th>
+          </tr>
+        </thead>
+        <tbody>{table}</tbody>
+      </table>
+    );
+  }
+}
+
+class RepoSelecter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      fullData: this.props.jsonData
+    };
+  }
+
+  render() {
+    const data = this.props.jsonData;
+    var table;
+    if (data) {
+      table = data.map((slice, step) => {
+        return singleRepo(slice, step);
+      });
+    }
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th>Owner</th>
+            <th>Repo</th>
           </tr>
         </thead>
         <tbody>{table}</tbody>
