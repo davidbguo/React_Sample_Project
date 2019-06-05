@@ -75,11 +75,10 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <div className="RepositorySelector">{
+        <div className="RepositorySelector" >
          <RepoSelecter jsonData={this.state.repoJSON} />
-        }
         </div>
-        <div className="CommitLogs">
+        <div className="CommitLogs" >
           <CommitLogs jsonData={this.state.commitJSON} />
         </div>
       </div>

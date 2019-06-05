@@ -31,3 +31,12 @@
     transform: rotate(360deg);
   }
 }
+
+.RepositorySelector {
+  float:left;
+}
+
+.CommitLogs {
+  display:inline-block;
+}
+
