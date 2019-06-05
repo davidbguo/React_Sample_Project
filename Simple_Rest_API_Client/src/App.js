@@ -15,6 +15,7 @@ function singleCommit(jsonData, step) {
 function singleRepo(jsonData, step) {
   return (
     <tr key={step}>
+      <td><input type="radio" name="pick" /> </td>
       <td>{jsonData.owner}</td>
       <td>{jsonData.name}</td>
     </tr>
@@ -31,6 +32,10 @@ class App extends React.Component {
       repoList: [],
       collabList: ["axk737", "davidbguo"]
     };
+  }
+
+  setURL(url) {
+    this.setState({ getURL: url })
   }
 
   getListOfRepos() {
