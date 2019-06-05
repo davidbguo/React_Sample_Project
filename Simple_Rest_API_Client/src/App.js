@@ -12,14 +12,25 @@ function singleCommit(jsonData, step) {
   );
 }
 
-function singleRepo(jsonData, step) {
+class SingleRepo extends React.Component {
+
+  constructor(props){
+    super(props)
+    this.onClick = this.onClick.bind(this)
+  }
+
+  onClick(){
+    this.props.onClick(this.props.jsonData.owner, this.props.jsonData.name)
+  }
+  render () {
   return (
-    <tr key={step}>
-      <td><input type="radio" name="pick" /> </td>
-      <td>{jsonData.owner}</td>
-      <td>{jsonData.name}</td>
+    <tr key={this.props.step}>
+      <td><input type="radio" name="pick" onClick = {this.onClick}/> </td>
+      <td>{this.props.jsonData.owner}</td>
+      <td>{this.props.jsonData.name}</td>
     </tr>
   );
+  }
 }
 
 class App extends React.Component {
@@ -32,10 +43,16 @@ class App extends React.Component {
       repoList: [],
       collabList: ["axk737", "davidbguo"]
     };
+    this.setURL = this.setURL.bind(this);
+    this.getListOfCommits = this.getListOfCommits.bind(this);
+    this.getListOfRepos = this.getListOfRepos.bind(this);
   }
 
-  setURL(url) {
-    this.setState({ getURL: url })
+  setURL(owner, repo) {
+    console.log(owner, repo)
+    const git = "https://api.github.com/repos/";
+    var url = git + owner + "/" + repo + "/commits";
+    this.setState({ getUrl: url });
   }
 
   getListOfRepos() {
@@ -77,11 +94,15 @@ class App extends React.Component {
     this.getListOfCommits();
   }
 
+  componentWillUpdate(){
+    this.getListOfCommits();
+  }
+
   render() {
     return (
       <div className="App">
         <div className="RepositorySelector" >
-         <RepoSelecter jsonData={this.state.repoJSON} />
+         <RepoSelecter jsonData={this.state.repoJSON} onClick = {(owner, name) => this.setURL(owner, name)} />
         </div>
         <div className="CommitLogs" >
           <CommitLogs jsonData={this.state.commitJSON} />
@@ -127,16 +148,26 @@ class RepoSelecter extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      fullData: this.props.jsonData
+      fullData: null
     };
   }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ fullData: nextProps.jsonData });
+   }
 
   render() {
     const data = this.props.jsonData;
     var table;
     if (data) {
       table = data.map((slice, step) => {
-        return singleRepo(slice, step);
+        return (
+          <SingleRepo
+            jsonData = {slice}
+            step = {step}
+            onClick = {(owner,name) => this.props.onClick(owner,name)}
+          />
+        )
       });
     }
     return (
