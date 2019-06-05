@@ -143,6 +143,7 @@ class RepoSelecter extends React.Component {
       <table>
         <thead>
           <tr>
+            <th colspan="1"></th>
             <th>Owner</th>
             <th>Repo</th>
           </tr>
